@@ -1,0 +1,11 @@
+# First time setup
+pip install python-dotenv psycopg2-binary
+
+#get db server up and running inside docker container
+docker-compose up -d
+
+# Check if it's running
+docker ps
+
+# To stop the container
+docker-compose down

@@ -1,1 +1,13 @@
+# Docker volumes
+pgdata/
+*.env
+.env
+
+# PostgreSQL data
 /data/
+postgres_data/
+
+# System files
+.DS_Store
+__pycache__/
+*.pyc

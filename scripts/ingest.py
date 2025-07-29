@@ -1,23 +1,9 @@
-def get_db_connection():
-    """
-    Creates and returns a database connection to PostgreSQL
-    Should handle connection parameters and error handling
-    """
-    pass
+from langchain_community.document_loaders import PyPDFLoader
+import os
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from db_connection import get_db_connection
 
-def init_vector_db():
-    """
-    Initializes the vector database
-    Creates necessary tables and enables pgvector extension
-    """
-    pass
 
-def load_documents():
-    """
-    Loads documents from the data directory
-    Handles multiple file types
-    """
-    pass
 
 def preprocess_documents():
     """
@@ -25,34 +11,95 @@ def preprocess_documents():
     Returns list of processed chunks with metadata
     """
     pass
-
 def create_embeddings():
     """
     Creates embeddings from text chunks
     Returns vectors ready for database insertion
     """
     pass
-
 def store_vectors(conn, cursor):
     """
     Stores vectors in pgvector database
-    Handles batch insertions and transaction management
+    Handles insertions and transaction management. no need to use batch insertsion - most simple way
     """
     pass
 
-def close_db_connection(conn, cursor):
+def ingest():
     """
-    Safely closes database connections
-    Handles commit/rollback decisions
-    """
-    pass
-
-def main():
-    """
-    Orchestrates the pipeline with proper DB connection handling:
-    connect -> init -> load -> process -> embed -> store -> close
+    Main function. Orchestrates the pipeline with proper DB connection handling:
+    connect -> load -> process -> embed -> store -> close connection when done
     """
     pass
-
 if __name__ == "__main__":
-    main()
+    ingest()
+
+
+
+
+
+data_path = "/workspaces/Study_RAG_assistant/data/"
+
+def load_docs_and_chunk(folder_path):
+    """
+    Loads all PDF files from a folder into documents and chunks them
+    """
+    page_documents = []
+    for filename in os.listdir(folder_path):
+        if filename.endswith('.pdf'):
+            file_path = os.path.join(folder_path, filename)
+            loader = PyPDFLoader(file_path)
+            documents = loader.load()
+            page_documents.extend(documents)
+
+    
+    text_splitter = RecursiveCharacterTextSplitter(
+       chunk_size=1000,
+       chunk_overlap=500,
+       length_function=len,
+       add_start_index=True
+    )
+    chunked_documents = text_splitter.split_documents(page_documents)
+
+    return chunked_documents
+
+
+chunked_documents=load_docs_and_chunk(data_path)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+from langchain.document_loaders import DirectoryLoader 
+data_path="data/books" 
+def load_documents():
+     loader=DirectoryLoader(data_path,glob="*.md") 
+     documents=loader.load()
+     return documents
+
+
+
+text_splitter=RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=500,length_function=len,add_start_index=True)
+chunks=text_splitter.split_documents(documents)
+
+
+ 
+"""
+
