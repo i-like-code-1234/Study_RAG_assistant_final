@@ -9,3 +9,9 @@ docker ps
 
 # To stop the container
 docker-compose down
+
+# To start up API (do in api file intergrated terminal)
+uvicorn api:app --reload --host 0.0.0.0 --port 8000
+
+#To start streamlit server
+streamlit run home.py
