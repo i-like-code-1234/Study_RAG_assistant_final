@@ -11,7 +11,7 @@ async def handle_query(request: Request):
     user_query = data.get("query", []) #as string
     file_selections = data.get("files", [])  #as string
     query_response = main_pipeline(user_query, file_selections)
-
+    print(query_response[0],query_response[1],query_response[2],query_response[3])
     return {
         "chatgpt_response": query_response[0],                    # chatgpt response as string
         "poor_search_warning": query_response[1],                 # boolean indicating if the search was poor

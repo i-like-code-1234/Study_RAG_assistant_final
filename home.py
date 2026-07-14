@@ -15,8 +15,16 @@ def format_response(response):
 
 
    # Main Answer
-   st.markdown("### 💬 ChatGPT's Answer")
+   st.markdown("### 💬 You're Answer")
    st.markdown(chatgpt_response)
+
+
+
+   with st.container(border=True):
+    st.markdown("Rate this response")
+    rating = st.slider("Rate the response out of 10", min_value=1, max_value=10, value=5)
+    st.write(f"You rated this response: **{rating}/10**")
+
 
    # Warning about poor search quality
    if poor_search_warning:
@@ -53,7 +61,7 @@ def format_response(response):
    
 
 #MAKE A SIMPLE INTRO 
-data_path = "/workspaces/Study_RAG_assistant/data/"
+data_path = "/workspaces/Study_RAG_assistant_final/data/"
 list_of_files=[]
 for filename in os.listdir(data_path):
  if filename.endswith('.pdf'):
@@ -81,7 +89,7 @@ for _ in range(2):
 #make columns for user input
 col1, col2, col3 = st.columns([4, 3, 1], gap="small")
 with col1:
-    user_query = st.text_input("", placeholder="Enter your question here")  #THIS IS DODGY, could cause issues
+    user_query = st.text_input("Question", placeholder="Enter your question here")  #THIS IS DODGY, could cause issues
 
 with col2:
     file_selections = st.multiselect("Select files", list_of_files)
@@ -93,7 +101,6 @@ with col3:
 
 
 
-# Send both pieces of data off to the API
 if send:
     if not user_query:
         st.warning("Please enter a query before submitting.")
@@ -103,8 +110,32 @@ if send:
         user_query_and_file_selection = {"query": user_query, "files": file_selections}
         response = requests.post("http://127.0.0.1:8000/query", json=user_query_and_file_selection)
         if response.status_code == 200:
-           format_response(response.json())   #THIS IS ME CALLING THE RESPONSE
+            st.session_state.response = response.json()  # store it!
         else:
             st.error(f"API returned status code {response.status_code}")
 
+# Display response from session state if it exists
+if "response" in st.session_state:
+    format_response(st.session_state.response)
 
+
+
+for _ in range(5):
+    st.write("")
+
+
+col1, col2 = st.columns([1, 1.3])
+with col1:
+    with st.container(border=True):
+        st.markdown("### Feedback Form")
+        name = st.text_input("Name")
+        feedback = st.text_area("Feedback", placeholder="Enter your feedback here...", height=100)
+        submit_feedback = st.button("Send Feedback")
+        
+        if submit_feedback:
+            if not name:
+                st.warning("Please enter your name.")
+            elif not feedback:
+                st.warning("Please enter some feedback.")
+            else:
+                st.success(f"Thank you {name}, your feedback has been submitted!")
