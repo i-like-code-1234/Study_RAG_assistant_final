@@ -10,7 +10,6 @@ import os
 CHATGPT_PROMPT_TEMPLATE = """
 Answer the question based on the following context
 -- It is important you answer each question fully and specifically
--- If you are asked to recall information about when my analysis exam is, remember the analysis exam is 1.5hrs in January, there is a different between the analysis exam and the analysis and algebra exam.
 -- Remember you are a teacher, be kind and helpfull
 {context}
 
